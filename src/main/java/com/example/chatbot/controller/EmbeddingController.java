@@ -2,6 +2,7 @@ package com.example.chatbot.controller;
 
 import com.example.chatbot.DTO.embedding.TextRequest;
 import com.example.chatbot.DTO.vectorDb.DocumentChunk;
+import com.example.chatbot.DTO.vectorDb.SearchResult;
 import com.example.chatbot.service.EmbeddingService;
 import com.example.chatbot.service.SearchService;
 import com.example.chatbot.util.SimilarityUtil;
@@ -45,7 +46,7 @@ public class EmbeddingController {
     }
 
     @PostMapping("/search")
-    public List<DocumentChunk> search(@RequestBody TextRequest request){
+    public List<SearchResult> search(@RequestBody TextRequest request){
         return searchService.search(request.text());
     }
 

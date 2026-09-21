@@ -36,6 +36,7 @@ public class ChatController {
         return new ChatResponse(res);
     }
 
+
     @PostMapping
     public ChatResponse chat(
             @RequestBody ChatRequest request
@@ -54,7 +55,9 @@ public class ChatController {
         String res = ollamaService.generate(messages);
 
         //add ai response to memory
-        messages.add(new Message("assistant" , res));
+        memoryService.addMessage(
+                request.sessionId(), new Message("assistant" , res)
+        );
 
         if (memoryService.needsSummary(request.sessionId())){
             String summary = ollamaService.summarize(
@@ -67,6 +70,7 @@ public class ChatController {
 
         return new ChatResponse(res);
     }
+
 
 
     @PostMapping("/vehicle")
@@ -116,7 +120,9 @@ public class ChatController {
         String res = ollamaService.generate(messages);
 
         //add ai response to memory
-        messages.add(new Message("assistant" , res));
+        memoryService.addMessage(
+                request.sessionId(), new Message("assistant" , res)
+        );
 
         return new ChatResponse(res);
     }
@@ -144,7 +150,9 @@ public class ChatController {
         String res = ollamaService.askWithContext(messages, knowledge);
 
         //add ai response to memory
-        messages.add(new Message("assistant" , res));
+        memoryService.addMessage(
+                request.sessionId(), new Message("assistant" , res)
+        );
 
         if (memoryService.needsSummary(request.sessionId())){
             String summary = ollamaService.summarize(
@@ -157,7 +165,6 @@ public class ChatController {
 
         return new ChatResponse(res);
     }
-
 
 
 }

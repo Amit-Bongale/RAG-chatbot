@@ -117,18 +117,24 @@ public class OllamaService {
     public String askWithContext(List<Message> messages, String knowledge){
         List<Message> content = new ArrayList<>(messages);
 
+        System.out.println("knowledge: " + knowledge);
+
         content.add(1, new Message(
                 "system",
                 """
-                    Use the following knowledge
-                    to answer the user.
+                You are a vehicle rental assistant.
+                Answer ONLY using the provided knowledge.
 
-                    If the answer is not present,
-                    say you do not know.
+                If the knowledge contains the answer,
+                respond directly from the knowledge.
 
-                    Knowledge:
-                    %s
-                    """.formatted(knowledge)
+                Do NOT say "I don't know" if the answer is present.
+
+                Do NOT use outside knowledge.
+
+                Knowledge:
+                %s
+                """.formatted(knowledge)
         ));
 
         return generate(content);
