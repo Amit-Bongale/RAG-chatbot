@@ -6,6 +6,7 @@ import com.example.chatbot.DTO.Message;
 import com.example.chatbot.DTO.Vehicle;
 import com.example.chatbot.service.ChatMemoryService;
 import com.example.chatbot.service.OllamaService;
+import com.example.chatbot.service.SearchService;
 import com.example.chatbot.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
+
     private final OllamaService ollamaService;
     private final ChatMemoryService memoryService;
     private final VehicleService vehicleService;
+    private final SearchService searchService;
 
     @PostMapping("/query")
     public ChatResponse query(
@@ -39,6 +42,11 @@ public class ChatController {
     ){
         //load old message of user by session id
         List<Message> messages = memoryService.buildContext(request.sessionId());
+
+        //adds user message to memory
+        memoryService.addMessage(
+                request.sessionId(), new Message("user" , request.message())
+        );
 
         //add the current query to message
         messages.add(new Message("user" , request.message()));
@@ -68,7 +76,12 @@ public class ChatController {
         //load old message of user by session id
         List<Message> messages = memoryService.buildContext(request.sessionId());
 
-        //add the current query to message
+        //adds user message to memory
+        memoryService.addMessage(
+                request.sessionId(), new Message("user" , request.message())
+        );
+
+        //add the current query to message variableS
         messages.add(new Message("user" , request.message()));
 
         boolean vehicleQuery = request.message().contains("bike")
@@ -104,6 +117,43 @@ public class ChatController {
 
         //add ai response to memory
         messages.add(new Message("assistant" , res));
+
+        return new ChatResponse(res);
+    }
+
+
+
+    @PostMapping("/rag")
+    public ChatResponse Ragchat(
+            @RequestBody ChatRequest request
+    ){
+        //load old message of user by session id
+        List<Message> messages = memoryService.buildContext(request.sessionId());
+
+        //retrieve suitable document from vectorStore
+        String knowledge = searchService.buildContext(request.message());
+
+        //adds the user message to memory
+        memoryService.addMessage(
+                request.sessionId(), new Message("user" , request.message())
+        );
+
+        //add the current query to context list
+        messages.add(new Message("user" , request.message()));
+
+        String res = ollamaService.askWithContext(messages, knowledge);
+
+        //add ai response to memory
+        messages.add(new Message("assistant" , res));
+
+        if (memoryService.needsSummary(request.sessionId())){
+            String summary = ollamaService.summarize(
+                    memoryService.getMessages(request.sessionId())
+            );
+
+            memoryService.updateSummary(request.sessionId() , summary);
+            memoryService.compactMemory(request.sessionId());
+        }
 
         return new ChatResponse(res);
     }

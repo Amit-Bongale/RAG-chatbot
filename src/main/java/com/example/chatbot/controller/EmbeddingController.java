@@ -1,7 +1,9 @@
 package com.example.chatbot.controller;
 
 import com.example.chatbot.DTO.embedding.TextRequest;
+import com.example.chatbot.DTO.vectorDb.DocumentChunk;
 import com.example.chatbot.service.EmbeddingService;
+import com.example.chatbot.service.SearchService;
 import com.example.chatbot.util.SimilarityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class EmbeddingController {
 
     private final EmbeddingService embeddingService;
+    private final SearchService searchService;
 
     @PostMapping
     public Map<String , Object> embed(@RequestBody TextRequest request){
@@ -39,6 +42,11 @@ public class EmbeddingController {
                 "Bike vs delivery" , s2
         );
 
+    }
+
+    @PostMapping("/search")
+    public List<DocumentChunk> search(@RequestBody TextRequest request){
+        return searchService.search(request.text());
     }
 
 }

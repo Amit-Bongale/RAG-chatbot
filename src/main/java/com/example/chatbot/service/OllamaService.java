@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JsonNode;
 
+import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +74,7 @@ public class OllamaService {
         return response.get("message").get("content").asString();
     }
 
+    // generate the summary of the previous chats of the user
     public String summarize(List<Message> messages){
 
         messages.add( new Message("system" , "Summarize the following conversation\n" +
@@ -108,6 +111,28 @@ public class OllamaService {
         }
 
         return response.get("response").asString();
+    }
+
+
+    public String askWithContext(List<Message> messages, String knowledge){
+        List<Message> content = new ArrayList<>(messages);
+
+        content.add(1, new Message(
+                "system",
+                """
+                    Use the following knowledge
+                    to answer the user.
+
+                    If the answer is not present,
+                    say you do not know.
+
+                    Knowledge:
+                    %s
+                    """.formatted(knowledge)
+        ));
+
+        return generate(content);
+
     }
 
 }
