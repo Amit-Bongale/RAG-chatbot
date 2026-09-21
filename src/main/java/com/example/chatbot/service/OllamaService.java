@@ -1,16 +1,14 @@
 package com.example.chatbot.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.example.chatbot.DTO.Message;
-import com.example.chatbot.DTO.OllamaChatRequest;
-import com.example.chatbot.DTO.OllamaRequest;
+import com.example.chatbot.DTO.ollama.OllamaChatRequest;
+import com.example.chatbot.DTO.ollama.OllamaRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.JsonNode;
 
-import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

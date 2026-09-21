@@ -1,4 +1,6 @@
-package com.example.chatbot.DTO;
+package com.example.chatbot.DTO.ollama;
+
+import com.example.chatbot.DTO.Message;
 
 import java.util.List;
 

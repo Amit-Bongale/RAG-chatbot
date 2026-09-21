@@ -1,4 +1,4 @@
-package com.example.chatbot.DTO;
+package com.example.chatbot.DTO.chat;
 
 public record ChatResponse(
         String response

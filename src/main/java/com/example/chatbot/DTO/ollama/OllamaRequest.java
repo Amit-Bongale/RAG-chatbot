@@ -1,4 +1,4 @@
-package com.example.chatbot.DTO;
+package com.example.chatbot.DTO.ollama;
 
 //for single requests
 public record OllamaRequest(

@@ -1,7 +1,7 @@
 package com.example.chatbot.controller;
 
-import com.example.chatbot.DTO.ChatRequest;
-import com.example.chatbot.DTO.ChatResponse;
+import com.example.chatbot.DTO.chat.ChatRequest;
+import com.example.chatbot.DTO.chat.ChatResponse;
 import com.example.chatbot.DTO.Message;
 import com.example.chatbot.DTO.Vehicle;
 import com.example.chatbot.service.ChatMemoryService;
