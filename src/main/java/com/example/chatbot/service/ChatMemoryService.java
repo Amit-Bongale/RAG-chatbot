@@ -13,6 +13,7 @@ public class ChatMemoryService {
 
     // stores key:userID/sessionId, value: list of messages
     private final Map<String , List<Message>> conversation = new ConcurrentHashMap<>();
+    private static final int MAX_MESSAGE = 20;
 
     public List<Message> getMessages(String sessionId){
         return conversation.computeIfAbsent(sessionId , k -> {
@@ -35,5 +36,18 @@ public class ChatMemoryService {
 
     public void addMessage(String sessionId, Message message){
         getMessages(sessionId).add(message);
+    }
+
+    // get latest 20 messages [sliding window]
+    public List<Message> getRecentMessages(String sessionId){
+        List<Message> messages = getMessages(sessionId);
+
+        if (messages.size() <= MAX_MESSAGE ){
+            return messages;
+        }
+
+        return messages.subList(
+                messages.size() - MAX_MESSAGE, messages.size()
+        );
     }
 }

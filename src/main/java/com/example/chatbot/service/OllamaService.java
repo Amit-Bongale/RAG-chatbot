@@ -21,6 +21,7 @@ public class OllamaService {
 
     private final RestClient restClient;
 
+
     @Value("${ollama.model}")
     private String model;
 
@@ -56,7 +57,7 @@ public class OllamaService {
     //for chat with memory
     public String generate(List<Message> messages){
 
-        System.out.println("Sending messages: " + messages);
+//        System.out.println("Sending messages: " + messages);
         OllamaChatRequest request = new OllamaChatRequest(model , messages , false);
 
         JsonNode response = restClient.post()
