@@ -12,6 +12,7 @@ import tools.jackson.databind.JsonNode;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -57,7 +58,7 @@ public class OllamaService {
     //for chat with memory
     public String generate(List<Message> messages){
 
-//        System.out.println("Sending messages: " + messages);
+        System.out.println("Sending messages: " + messages);
         OllamaChatRequest request = new OllamaChatRequest(model , messages , false);
 
         JsonNode response = restClient.post()
@@ -71,6 +72,44 @@ public class OllamaService {
         }
 
         return response.get("message").get("content").asString();
+    }
+
+    public String summarize(List<Message> messages){
+
+        messages.add( new Message("system" , "Summarize the following conversation\n" +
+                "in 5 bullet points."));
+
+        String conversation = messages.stream().map(
+                message -> "%s: %s".formatted(message.role() , message.content())
+        ).collect(Collectors.joining("\n"));
+
+        String prompt = """
+            Summarize the following conversation.
+
+            Rules:
+            - Keep important user preferences.
+            - Keep important decisions.
+            - Keep important context.
+            - Maximum 5 bullet points.
+            - Ignore greetings and small talk.
+
+            Conversation:
+            %s
+            """.formatted(conversation);
+
+        OllamaRequest request = new OllamaRequest(model , prompt , false);
+
+        JsonNode response = restClient.post()
+                .uri("/api/generate")
+                .body(request)
+                .retrieve()
+                .body(JsonNode.class);
+
+        if (response == null) {
+            throw new RuntimeException("response field not found");
+        }
+
+        return response.get("response").asString();
     }
 
 }

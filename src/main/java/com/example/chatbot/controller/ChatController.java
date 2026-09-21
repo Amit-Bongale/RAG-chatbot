@@ -38,7 +38,7 @@ public class ChatController {
             @RequestBody ChatRequest request
     ){
         //load old message of user by session id
-        List<Message> messages = memoryService.getRecentMessages(request.sessionId());
+        List<Message> messages = memoryService.buildContext(request.sessionId());
 
         //add the current query to message
         messages.add(new Message("user" , request.message()));
@@ -47,6 +47,15 @@ public class ChatController {
 
         //add ai response to memory
         messages.add(new Message("assistant" , res));
+
+        if (memoryService.needsSummary(request.sessionId())){
+            String summary = ollamaService.summarize(
+                    memoryService.getMessages(request.sessionId())
+            );
+
+            memoryService.updateSummary(request.sessionId() , summary);
+            memoryService.compactMemory(request.sessionId());
+        }
 
         return new ChatResponse(res);
     }
@@ -57,7 +66,7 @@ public class ChatController {
             @RequestBody ChatRequest request
     ){
         //load old message of user by session id
-        List<Message> messages = memoryService.getRecentMessages(request.sessionId());
+        List<Message> messages = memoryService.buildContext(request.sessionId());
 
         //add the current query to message
         messages.add(new Message("user" , request.message()));
