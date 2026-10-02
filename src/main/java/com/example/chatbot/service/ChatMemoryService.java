@@ -20,8 +20,8 @@ public class ChatMemoryService {
     private final Map<String , String> summaries = new ConcurrentHashMap<>();
 
     private static final int MAX_MESSAGE = 8;
-    private static final int SUMMARY_THRESHOLD = 20;
-    private static final int WINDOW_SIZE = 30;
+    private static final int SUMMARY_THRESHOLD = 10;
+    private static final int WINDOW_SIZE = 20;
 
     private static final Message  SYSTEM_PROMPT =
             new Message(

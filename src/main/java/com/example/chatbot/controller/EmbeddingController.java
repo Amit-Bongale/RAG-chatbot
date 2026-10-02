@@ -1,11 +1,11 @@
 package com.example.chatbot.controller;
 
 import com.example.chatbot.DTO.embedding.TextRequest;
-import com.example.chatbot.DTO.vectorDb.DocumentChunk;
 import com.example.chatbot.DTO.vectorDb.SearchResult;
 import com.example.chatbot.service.EmbeddingService;
 import com.example.chatbot.service.SearchService;
 import com.example.chatbot.util.SimilarityUtil;
+import com.example.chatbot.util.TextChunker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +20,8 @@ public class EmbeddingController {
 
     private final EmbeddingService embeddingService;
     private final SearchService searchService;
+
+    private final TextChunker textChunker;
 
     @PostMapping
     public Map<String , Object> embed(@RequestBody TextRequest request){
@@ -48,6 +50,32 @@ public class EmbeddingController {
     @PostMapping("/search")
     public List<SearchResult> search(@RequestBody TextRequest request){
         return searchService.search(request.text());
+    }
+
+    @GetMapping("/chunks")
+    public List<String> embedChunks(){
+        String text = """
+        Bookings can be cancelled up to 24 hours
+        before pickup.
+
+        Customers cancelling within this period
+        receive a full refund.
+
+        Late cancellations may incur a
+        processing fee.
+        
+        Bookings can be cancelled up to 24 hours
+        before pickup.
+
+        Customers cancelling within this period
+        receive a full refund.
+
+        Late cancellations may incur a
+        processing fee.
+        """;
+
+        return textChunker.chunk(text);
+
     }
 
 }

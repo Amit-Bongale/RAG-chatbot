@@ -16,7 +16,7 @@ public class SearchService {
     private final EmbeddingService embeddingService;
     private final VectorStoreService vectorStoreService;
 
-    private static final double MIN_SCORE = 0.7;
+    private static final double MIN_SCORE = 0.65;
 
     public List<SearchResult> search(String query){
 
@@ -43,7 +43,12 @@ public class SearchService {
             return "";
         }
 
-        documents.forEach(doc -> System.out.println("Score: " + doc.score() + " content:" + doc.chunk()));
+        for (SearchResult result : documents) {
+            System.out.println(
+                    "Score: " + result.score()
+                            + " | " + result.chunk().content()
+            );
+        }
 
         return documents.stream()
                 .map(result -> result.chunk().content())

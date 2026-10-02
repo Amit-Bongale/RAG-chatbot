@@ -58,7 +58,7 @@ public class OllamaService {
     //for chat with memory
     public String generate(List<Message> messages){
 
-        System.out.println("Sending messages: " + messages);
+//        System.out.println("Sending messages: " + messages);
         OllamaChatRequest request = new OllamaChatRequest(model , messages , false);
 
         JsonNode response = restClient.post()
@@ -117,25 +117,25 @@ public class OllamaService {
     public String askWithContext(List<Message> messages, String knowledge){
         List<Message> content = new ArrayList<>(messages);
 
-        System.out.println("knowledge: " + knowledge);
-
-        content.add(1, new Message(
-                "system",
-                """
-                You are a vehicle rental assistant.
-                Answer ONLY using the provided knowledge.
-
-                If the knowledge contains the answer,
-                respond directly from the knowledge.
-
-                Do NOT say "I don't know" if the answer is present.
-
-                Do NOT use outside knowledge.
-
-                Knowledge:
-                %s
-                """.formatted(knowledge)
-        ));
+//        System.out.println("knowledge: " + knowledge);
+//
+//        content.add(1, new Message(
+//                "system",
+//                """
+//                You are a vehicle rental assistant.
+//                Answer ONLY using the provided knowledge.
+//
+//                If the knowledge contains the answer,
+//                respond directly from the knowledge.
+//
+//                Do NOT say "I don't know" if the answer is present.
+//
+//                Do NOT use outside knowledge.
+//
+//                Knowledge:
+//                %s
+//                """.formatted(knowledge)
+//        ));
 
         return generate(content);
 

@@ -139,6 +139,10 @@ public class ChatController {
         //retrieve suitable document from vectorStore
         String knowledge = searchService.buildContext(request.message());
 
+        if (knowledge.isBlank()){
+            return new ChatResponse("Sorry, I don't have that information.");
+        }
+
         //adds the user message to memory
         memoryService.addMessage(
                 request.sessionId(), new Message("user" , request.message())
